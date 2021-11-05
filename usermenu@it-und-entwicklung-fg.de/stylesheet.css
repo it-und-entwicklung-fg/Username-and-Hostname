@@ -1,0 +1,16 @@
+.hostname {
+    padding-left: 12px;
+}
+
+.userDisplaName {
+    font-size: 16px;
+}
+
+.userName {
+    font-size: 12px;
+}
+
+.userNameBox {
+    margin-left: 10px;
+    margin-right: 10px;
+}
