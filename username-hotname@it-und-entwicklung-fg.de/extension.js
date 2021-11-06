@@ -64,14 +64,12 @@ function updateExtensionAppearence() {
     //Creates new PopupMenuItem
     this.iconMenuItem = new PopupMenu.PopupMenuItem('');
     //Adds a box where we are going to store picture and avatar
-    this.iconMenuItem.add_child(
-        new St.BoxLayout({
-            x_align: Clutter.ActorAlign.START,
-            x_expand: true,
-          	y_expand: true,
-          	vertical: false,
-         })
-    );
+    this.iconMenuItem.add_child(new St.BoxLayout({
+                                    x_align: Clutter.ActorAlign.START,
+                                    x_expand: true,
+                                    y_expand: true,
+                                    vertical: false,
+                                }));
 
     //Adds item to menu
     Main.panel.statusArea.aggregateMenu.menu.addMenuItem(this.iconMenuItem, 0);
@@ -80,50 +78,46 @@ function updateExtensionAppearence() {
     //When the popup menu opens do this:
     //Check if on compact mode
     this._menuOpenStateChangedId = this.systemMenu.menu.connect('open-state-changed', Lang.bind(this,
-          function(menu, open) {
-              if (!open)
-                  return;
-	            //Get user avatar and name
-              var userManager = AccountsService.UserManager.get_default();
-              var user = userManager.get_user(GLib.get_user_name());
-              //Get user icon
-              var avatar = new Avatar(user, {
-              	iconSize: 48,
-              });
+        function(menu, open) {
+            if (!open)
+                return;
+	        //Get user avatar and name
+            var userManager = AccountsService.UserManager.get_default();
+            var user = userManager.get_user(GLib.get_user_name());
+            //Get user icon
+            var avatar = new Avatar(user, {
+                iconSize: 48,
+            });
 
-              //Get user name and center it vertically
-              var userString = new St.Label ({
+            //Get user name and center it vertically
+            var userString = new St.Label ({
                 style_class: 'userDisplaName',
-              	text: "  " + GLib.get_real_name(),
-                  x_align: Clutter.ActorAlign.CENTER
-              });
+              	text: GLib.get_real_name()
+            });
 
-              var usernameString = new St.Label ({
+            var usernameString = new St.Label ({
                 style_class: 'userName',
-                text: "  " + GLib.get_user_name(),
-                x_align: Clutter.ActorAlign.CENTER
-              });
+                text: GLib.get_user_name()
+            });
 
-              var userBox = new St.BoxLayout({
+            var userBox = new St.BoxLayout({
                 style_class: 'userNameBox',
                 y_align: Clutter.ActorAlign.CENTER,
-                x_expand: false,
-                y_expand: true,
                 vertical: true,
-              });
+            });
 
-              userBox.add_child(userString);
-              userBox.add_child(usernameString)
+            userBox.add_child(userString);
+            userBox.add_child(usernameString)
 
-              avatar.update();
+            avatar.update();
 
-              //Remove all created menu itens
-              this.iconMenuItem.actor.get_last_child().remove_all_children();
+            //Remove all created menu itens
+            this.iconMenuItem.actor.get_last_child().remove_all_children();
 
-              //Add the avatar picture
-              this.iconMenuItem.actor.get_last_child().add_child(avatar.actor);
+            //Add the avatar picture
+            this.iconMenuItem.actor.get_last_child().add_child(avatar.actor);
 
-              //Add name
-              this.iconMenuItem.actor.get_last_child().add_child(userBox);
+            //Add name
+            this.iconMenuItem.actor.get_last_child().add_child(userBox);
     }));
 }

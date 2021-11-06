@@ -5,9 +5,10 @@
   "name": "Username and Hostname to panel",
   "shell-version": [
     "3.36",
-    "3.38"
+    "3.38",
+    "40"
   ],
   "url": "https://github.com/it-entwicklung-fg/Username-and-Hostname",
   "uuid": "username-hotname@it-und-entwicklung-fg.de",
-  "version": 1
+  "version": 4
 }
