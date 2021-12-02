@@ -62,7 +62,7 @@ function resetPre() {
 
 function updateExtensionAppearence() {
     //Creates new PopupMenuItem
-    this.iconMenuItem = new PopupMenu.PopupMenuItem('');
+    this.iconMenuItem = new PopupMenu.PopupMenuItem('', {reactive : false});
     //Adds a box where we are going to store picture and avatar
     this.iconMenuItem.add_child(new St.BoxLayout({
                                     x_align: Clutter.ActorAlign.START,
