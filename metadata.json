@@ -6,7 +6,8 @@
   "shell-version": [
     "3.36",
     "3.38",
-    "40"
+    "40",
+    "41"
   ],
   "url": "https://github.com/it-entwicklung-fg/Username-and-Hostname",
   "uuid": "username-hotname@it-und-entwicklung-fg.de",

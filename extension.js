@@ -2,11 +2,14 @@
 const Main = imports.ui.main;
 const Lang = imports.lang;
 const Util = imports.misc.util;
+const Shell = imports.gi.Shell;
 const PopupMenu = imports.ui.popupMenu;
 const { AccountsService, Clutter, GLib, St } = imports.gi;
 const { Avatar } = imports.ui.userWidget;
 const Config = imports.misc.config;
 const GObject = imports.gi.GObject;
+
+const SystemActions = imports.misc.systemActions;
 
 //Import extension preferences
 const ExtensionUtils = imports.misc.extensionUtils;
@@ -20,6 +23,7 @@ var hostname_lbl = null;
 let shell_Version = Config.PACKAGE_VERSION;
 
 function init() {
+    DefaultActions = new SystemActions.getDefault();
 }
 
 //Run when enabled
@@ -71,6 +75,12 @@ function updateExtensionAppearence() {
                                     vertical: false,
                                 }));
 
+    this.iconMenuItem.connect('activate', (function() {
+        let def = Shell.AppSystem.get_default();
+        let app = def.lookup_app('gnome-user-accounts-panel.desktop');
+        app.activate();
+	}).bind(this));
+
     //Adds item to menu
     Main.panel.statusArea.aggregateMenu.menu.addMenuItem(this.iconMenuItem, 0);
     this.systemMenu = Main.panel.statusArea['aggregateMenu']._system;
@@ -99,7 +109,6 @@ function updateExtensionAppearence() {
                 style_class: 'userName',
                 text: GLib.get_user_name()
             });
-
             var userBox = new St.BoxLayout({
                 style_class: 'userNameBox',
                 y_align: Clutter.ActorAlign.CENTER,
@@ -107,7 +116,7 @@ function updateExtensionAppearence() {
             });
 
             userBox.add_child(userString);
-            userBox.add_child(usernameString)
+            userBox.add_child(usernameString);
 
             avatar.update();
 

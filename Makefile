@@ -2,7 +2,7 @@
 
 UUID = username-hotname@it-und-entwicklung-fg.de
 BASE_MODULES = extension.js stylesheet.css metadata.json LICENSE README.md
-EXTRA_MEDIA = screenshot-of-menu.png
+EXTRA_MEDIA = logo.png
 ifeq ($(strip $(DESTDIR)),)
 	INSTALLTYPE = local
 	INSTALLBASE = $(HOME)/.local/share/gnome-shell/extensions
