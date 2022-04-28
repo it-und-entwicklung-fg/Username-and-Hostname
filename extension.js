@@ -1,6 +1,5 @@
 // Import nescessary libs
 const Main = imports.ui.main;
-const Lang = imports.lang;
 const Util = imports.misc.util;
 const Shell = imports.gi.Shell;
 const PopupMenu = imports.ui.popupMenu;
@@ -87,8 +86,8 @@ function updateExtensionAppearence() {
 
     //When the popup menu opens do this:
     //Check if on compact mode
-    this._menuOpenStateChangedId = this.systemMenu.menu.connect('open-state-changed', Lang.bind(this,
-        function(menu, open) {
+    this._menuOpenStateChangedId = this.systemMenu.menu.connect('open-state-changed', 
+        (menu, open) => {
             if (!open)
                 return;
 	        //Get user avatar and name
@@ -128,5 +127,5 @@ function updateExtensionAppearence() {
 
             //Add name
             this.iconMenuItem.actor.get_last_child().add_child(userBox);
-    }));
+    });
 }
