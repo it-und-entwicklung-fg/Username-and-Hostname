@@ -6,6 +6,15 @@ Diese Erweiterung zeigt den Hostnamen auf der linken Seite des Panel's an und de
 
 ## Funktionen
 - Anzeigen des Hostnamen im Panel
+- Anklicken des Hostnamen zeigt ein Menü mit:
+  - Über dieses System
+  - Einstellungen
+  - Terminal
+  - Bereitschaft
+  - Neustart ...
+  - Ausschalten ...
+  - Sperren
+  - Abmelden
 - Anzeigen des Benutzernamen im Systemmenü
 - Anzeigen des Anmeldenamen im Systemmenü
 - Anklicken des Benutzernamen offnet die Benutzereinstellungen
