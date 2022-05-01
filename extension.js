@@ -7,25 +7,70 @@ const { AccountsService, Clutter, GLib, St } = imports.gi;
 const { Avatar } = imports.ui.userWidget;
 const GObject = imports.gi.GObject;
 
-const SystemActions = imports.misc.systemActions;
+// Imports for system-menu and actions
 const System = Main.panel.statusArea.aggregateMenu._system;
 const SystemMenu = System.menu;
 
+// Imports for settings
+const Gio = imports.gi.Gio;
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
+const Lib = Me.imports.convenience;
+
 // Create variables
+var SETTINGS_SCHEMA = "org.gnome.shell.extensions.username-and-hostname";
 var iconMenuItem = null;
-var hostname_btn = null;
+let hostname_btn = null;
+let extensionSettings = null;
 
 // Initialize the extension
-function init() {
-    DefaultActions = new SystemActions.getDefault();
+function init() {}
+
+function recreate() {
+    // Destroy everything
+    iconMenuItem.destroy();
+    Main.panel._leftBox.remove_child(hostname_btn);
+    hostname_btn.destroy();
+    hostname_btn = null;
+    // Recreate everything
+    // Create the Avatar
+    createAvatar();
+    // Check if menu should be displayed and show
+    if (extensionSettings.get_boolean('show-menu')) {
+        hostname_btn = new btn();
+        Main.panel.addToStatusArea('HostnameButton', hostname_btn, 0, 'left')
+    } else {
+        hostname_btn = new St.Button({style_class: 'hostname',
+                                reactive: false,
+                                can_focus: false,
+                                track_hover: false,
+                                label: GLib.get_host_name()});
+        Main.panel._leftBox.insert_child_at_index(hostname_btn, 0);
+    }
 }
 
 // Enable the extension
 function enable() {
+    // Read the settings
+    extensionSettings = Lib.getSettings(SETTINGS_SCHEMA);
+    // Connect to gsettings and wait for the extension's settings to change
+    _settingsChangedSignal = extensionSettings.connect('changed', () => {
+        recreate()
+    });
     // Create the Avatar
     createAvatar();
-    let hostname_btn = new btn();
-    Main.panel.addToStatusArea('HostnameButton', hostname_btn, 0, 'left')
+    // Check if menu should be displayed and show
+    if (extensionSettings.get_boolean('show-menu')) {
+        hostname_btn = new btn();
+        Main.panel.addToStatusArea('HostnameButton', hostname_btn, 0, 'left')
+    } else {
+        hostname_btn = new St.Button({style_class: 'hostname',
+                                reactive: false,
+                                can_focus: false,
+                                track_hover: false,
+                                label: GLib.get_host_name()});
+        Main.panel._leftBox.insert_child_at_index(hostname_btn, 0);
+    }
 }
 
 // Disable the extension
@@ -40,19 +85,7 @@ function disable() {
     Main.panel._leftBox.remove_child(hostname_btn);
     hostname_btn.destroy();
     hostname_btn = null;
-}
-
-// Recreate everything
-function resetPre() {
-    // Disconnect systemMenu
-    if (this._menuOpenStateChangedId) {
-        this.systemMenu.menu.disconnect(this._menuOpenStateChangedId);
-        this._menuOpenStateChangedId = 0;
-    }
-    // Destroy Avatar-Menu
-    iconMenuItem.destroy();
-    // Create the Avatar
-    createAvatar();
+    _settingsChangedSignal = null;
 }
 
 // Hostname Button Object
@@ -67,27 +100,29 @@ var btn = GObject.registerClass(class HostnameButton extends PanelMenu.Button {
         });
         this.add_actor(label);
         this.toggleOptions()
-        // Remove the system-menu-items
-        SystemMenu.actor.remove_child(System._settingsItem);
-        SystemMenu.actor.remove_child(System._lockScreenItem);
-        SystemMenu.actor.remove_child(System._sessionSubMenu);
+        if (extensionSettings.get_boolean('hide-system-keys')) {
+            // Remove the system-menu items
+            SystemMenu.actor.remove_child(System._settingsItem);
+            SystemMenu.actor.remove_child(System._lockScreenItem);
+            SystemMenu.actor.remove_child(System._sessionSubMenu);
+        }
     }
 
     // Create the menu-items
     toggleOptions() {
 		this.menu.removeAll()
         // Create items
-		this.item1 = new PopupMenu.PopupMenuItem(_('Über dieses System'));
+		this.item1 = new PopupMenu.PopupImageMenuItem(' Über dieses System', 'preferences-system-details-symbolic');
 		this.item3 = new PopupMenu.PopupSeparatorMenuItem();
-		this.item4 = new PopupMenu.PopupMenuItem(_('Einstellungen'));
-		this.item5 = new PopupMenu.PopupMenuItem(_('Terminal'));
+		this.item4 = new PopupMenu.PopupImageMenuItem(' Einstellungen', 'system-settings-symbolic');
+		this.item5 = new PopupMenu.PopupImageMenuItem(' Terminal', 'terminal-symbolic');
 		this.item6 = new PopupMenu.PopupSeparatorMenuItem();
-		this.item8 = new PopupMenu.PopupMenuItem(_('Bereitschaft'));
-        this.item9 = new PopupMenu.PopupMenuItem(_('Neustart ...'));
-        this.item10 = new PopupMenu.PopupMenuItem(_('Ausschalten ...'));
+		this.item8 = new PopupMenu.PopupImageMenuItem('Bereitschaft', 'pause-symbolic');
+        this.item9 = new PopupMenu.PopupImageMenuItem(' Neustart ...', 'system-restart-symbolic');
+        this.item10 = new PopupMenu.PopupImageMenuItem(' Ausschalten ...', 'system-shutdown-symbolic');
         this.item11 = new PopupMenu.PopupSeparatorMenuItem();
-        this.item12 = new PopupMenu.PopupMenuItem(_('Sperren'));
-        this.item13 = new PopupMenu.PopupMenuItem(_('Abmelden'));
+        this.item12 = new PopupMenu.PopupImageMenuItem(' Sperren', 'changes-prevent-symbolic');
+        this.item13 = new PopupMenu.PopupImageMenuItem(' Abmelden', 'system-log-out-symbolic');
 		
         // Set actions
 		this.item1.connect('activate', () => {Util.spawn(['gnome-control-center', 'info-overview'])});
@@ -98,7 +133,7 @@ var btn = GObject.registerClass(class HostnameButton extends PanelMenu.Button {
         this.item10.connect('activate', () => {Util.spawn(['gnome-session-quit', '--power-off'])});
         this.item12.connect('activate', () => {Util.spawn(['loginctl', 'lock-session'])});
         this.item13.connect('activate', () => {Util.spawn(['gnome-session-quit', '--logout'])});
-		
+
         // Add to menu
 		this.menu.addMenuItem(this.item1);
 		this.menu.addMenuItem(this.item3);
@@ -116,9 +151,12 @@ var btn = GObject.registerClass(class HostnameButton extends PanelMenu.Button {
     // Destroy the Button
     _onDestroy() {
         super._onDestroy();
-        SystemMenu.actor.insert_child_at_index(System._settingsItem, SystemMenu.numMenuItems);
-        SystemMenu.actor.insert_child_at_index(System._lockScreenItem, SystemMenu.numMenuItems);
-        SystemMenu.actor.insert_child_at_index(System._sessionSubMenu, SystemMenu.numMenuItems);
+        if (extensionSettings.get_boolean('hide-system-keys')) {
+            // Recreate system-menu items
+            SystemMenu.actor.insert_child_at_index(System._settingsItem, SystemMenu.numMenuItems);
+            SystemMenu.actor.insert_child_at_index(System._lockScreenItem, SystemMenu.numMenuItems);
+            SystemMenu.actor.insert_child_at_index(System._sessionSubMenu, SystemMenu.numMenuItems);
+        }
     }
 })
 

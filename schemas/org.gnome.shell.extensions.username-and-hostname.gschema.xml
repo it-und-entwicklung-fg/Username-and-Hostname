@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+
+  <schema id="org.gnome.shell.extensions.username-and-hostname"
+    path="/org/gnome/shell/extensions/username-and-hostname/">
+
+    <key type="b" name="show-menu">
+      <default>true</default>
+      <summary>Activate the menu by the hostname</summary>
+    </key>
+
+    <key type="b" name="hide-system-keys">
+      <default>false</default>
+      <summary>Hide the entrys in the system-menu that are present on the new menu</summary>
+    </key>
+
+  </schema>
+
+</schemalist>

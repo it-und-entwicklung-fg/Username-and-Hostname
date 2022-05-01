@@ -1,8 +1,10 @@
 # Basic Makefile
 
 UUID = username-hotname@it-und-entwicklung-fg.de
-BASE_MODULES = extension.js stylesheet.css metadata.json LICENSE README.md
+BASE_MODULES = extension.js stylesheet.css metadata.json LICENSE README.md prefs.js convenience.js
 EXTRA_MEDIA = logo.png
+EXTRA_UI = prefs-gtk4.glade prefs.glade
+EXTRA_SETTINGS = gschemas.compiled
 ifeq ($(strip $(DESTDIR)),)
 	INSTALLTYPE = local
 	INSTALLBASE = $(HOME)/.local/share/gnome-shell/extensions
@@ -44,9 +46,14 @@ zip-file: _build
 	-rm -fR _build
 
 _build: 
+	glib-compile-schemas schemas/
 	-rm -fR ./_build
 	mkdir -p _build
 	cp $(BASE_MODULES) _build
 	mkdir -p _build/media
 	cd media ; cp $(EXTRA_MEDIA) ../_build/media/
+	mkdir -p _build/ui
+	cd ui ; cp $(EXTRA_UI) ../_build/ui/
+	mkdir -p _build/schemas
+	cd schemas ; cp $(EXTRA_SETTINGS) ../_build/schemas/
 	sed -i 's/"version": -1/"version": "$(VERSION)"/'  _build/metadata.json;
