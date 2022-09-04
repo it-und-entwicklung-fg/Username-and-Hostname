@@ -113,39 +113,36 @@ var btn = GObject.registerClass(class HostnameButton extends PanelMenu.Button {
 		this.menu.removeAll()
         // Create items
 		this.item1 = new PopupMenu.PopupImageMenuItem(' Über dieses System', 'preferences-system-details-symbolic');
-		this.item3 = new PopupMenu.PopupSeparatorMenuItem();
-		this.item4 = new PopupMenu.PopupImageMenuItem(' Einstellungen', 'system-settings-symbolic');
-		this.item5 = new PopupMenu.PopupImageMenuItem(' Terminal', 'terminal-symbolic');
-		this.item6 = new PopupMenu.PopupSeparatorMenuItem();
-		this.item8 = new PopupMenu.PopupImageMenuItem('Bereitschaft', 'pause-symbolic');
-        this.item9 = new PopupMenu.PopupImageMenuItem(' Neustart ...', 'system-restart-symbolic');
-        this.item10 = new PopupMenu.PopupImageMenuItem(' Ausschalten ...', 'system-shutdown-symbolic');
-        this.item11 = new PopupMenu.PopupSeparatorMenuItem();
-        this.item12 = new PopupMenu.PopupImageMenuItem(' Sperren', 'changes-prevent-symbolic');
-        this.item13 = new PopupMenu.PopupImageMenuItem(' Abmelden', 'system-log-out-symbolic');
+		this.item2 = new PopupMenu.PopupSeparatorMenuItem();
+		this.item3 = new PopupMenu.PopupImageMenuItem(' Einstellungen', 'system-settings-symbolic');
+		this.item4 = new PopupMenu.PopupImageMenuItem(' Terminal', 'terminal-symbolic');
+		this.item5 = new PopupMenu.PopupSeparatorMenuItem();
+        this.item6 = new PopupMenu.PopupImageMenuItem(' Neustart ...', 'system-restart-symbolic');
+        this.item7 = new PopupMenu.PopupImageMenuItem(' Ausschalten ...', 'system-shutdown-symbolic');
+        this.item8 = new PopupMenu.PopupSeparatorMenuItem();
+        this.item9 = new PopupMenu.PopupImageMenuItem(' Sperren', 'changes-prevent-symbolic');
+        this.item10 = new PopupMenu.PopupImageMenuItem(' Abmelden', 'system-log-out-symbolic');
 		
         // Set actions
 		this.item1.connect('activate', () => {Util.spawn(['gnome-control-center', 'info-overview'])});
-		this.item4.connect('activate', () => {Util.spawn(['gnome-control-center'])});
-        this.item5.connect('activate', () => {Util.spawn(['x-terminal-emulator'])});
-        this.item8.connect('activate', () => {Util.spawn(['systemctl', 'suspend'])});
-        this.item9.connect('activate', () => {Util.spawn(['gnome-session-quit', '--reboot'])});
-        this.item10.connect('activate', () => {Util.spawn(['gnome-session-quit', '--power-off'])});
-        this.item12.connect('activate', () => {Util.spawn(['loginctl', 'lock-session'])});
-        this.item13.connect('activate', () => {Util.spawn(['gnome-session-quit', '--logout'])});
+		this.item3.connect('activate', () => {Util.spawn(['gnome-control-center'])});
+        this.item4.connect('activate', () => {Util.spawn(['x-terminal-emulator'])});
+        this.item6.connect('activate', () => {Util.spawn(['gnome-session-quit', '--reboot'])});
+        this.item7.connect('activate', () => {Util.spawn(['gnome-session-quit', '--power-off'])});
+        this.item9.connect('activate', () => {Util.spawn(['loginctl', 'lock-session'])});
+        this.item10.connect('activate', () => {Util.spawn(['gnome-session-quit', '--logout'])});
 
         // Add to menu
 		this.menu.addMenuItem(this.item1);
+		this.menu.addMenuItem(this.item2);
 		this.menu.addMenuItem(this.item3);
 		this.menu.addMenuItem(this.item4);
 		this.menu.addMenuItem(this.item5);
-		this.menu.addMenuItem(this.item6);
-        this.menu.addMenuItem(this.item8);
-        this.menu.addMenuItem(this.item9);
-		this.menu.addMenuItem(this.item10);
-		this.menu.addMenuItem(this.item11);
-		this.menu.addMenuItem(this.item12);
-        this.menu.addMenuItem(this.item13);
+        this.menu.addMenuItem(this.item6);
+		this.menu.addMenuItem(this.item7);
+		this.menu.addMenuItem(this.item8);
+		this.menu.addMenuItem(this.item9);
+        this.menu.addMenuItem(this.item10);
 	}
 
     // Destroy the Button
